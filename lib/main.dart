@@ -3,10 +3,13 @@ import 'package:hedwig_hp_assistant/providers/spell_provider.dart';
 import 'package:hedwig_hp_assistant/screens/add_spell_screen.dart';
 import 'package:hedwig_hp_assistant/screens/home_screen.dart';
 import 'package:hedwig_hp_assistant/screens/settings_screen.dart';
+import 'package:hedwig_hp_assistant/services/smart_button_service.dart';
 import 'package:provider/provider.dart';
 import 'package:hedwig_hp_assistant/screens/spell_list_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SmartButtonService.init();
   runApp(ChangeNotifierProvider(
     create: (context) => SpellProvider(),
     child: MaterialApp(
