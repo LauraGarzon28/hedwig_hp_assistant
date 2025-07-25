@@ -16,8 +16,12 @@ class SmartButtonService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("SmartButtonService", "Servicio ejecutándose...")
 
-        // Aquí puedes escuchar el botón o lanzar tu lógica.
-        // Por ahora solo un log para verificar.
+        // Lanza MainActivity si no está en primer plano (por ejemplo, si la app estaba cerrada)
+        val launchIntent = Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra("source", "smart_button") // Opcional, si quieres saber desde Flutter que fue invocada por botón
+        }
+        startActivity(launchIntent)
 
         return START_STICKY
     }
