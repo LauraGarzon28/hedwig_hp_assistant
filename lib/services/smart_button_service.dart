@@ -5,10 +5,16 @@ class SmartButtonService {
 
   static void init() {
     _channel.setMethodCallHandler((call) async {
-      if (call.method == "smartButtonPressed") {
-        // Aquí decides qué hacer, como iniciar STT
-        print("Botón inteligente presionado");
-        // Puedes llamar aquí a tu lógica de STT o algo más
+      switch (call.method) {
+        case "smartButtonPressed":
+          print("Botón inteligente presionado");
+          // Puedes iniciar STT en Flutter si no lo hiciste ya en Android
+          break;
+        case "speechRecognized":
+          final text = call.arguments as String;
+          print("Texto reconocido desde Android: $text");
+          // Aquí envíalo a tu lógica de procesamiento de comandos
+          break;
       }
     });
   }

@@ -62,10 +62,15 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
+        val text = intent.getStringExtra("recognized_text")
         val startedFromAccessibility = intent.getBooleanExtra("fromAccessibility", false)
 
-        if (startedFromAccessibility) {
+        if (!text.isNullOrEmpty()) {
+            flutterEngine?.dartExecutor?.binaryMessenger?.let { messenger ->
+                MethodChannel(messenger, "voice_key_channel").invokeMethod("speechRecognized", text)
+            }
+        } else if (startedFromAccessibility) {
             flutterEngine?.dartExecutor?.binaryMessenger?.let { messenger ->
                 MethodChannel(messenger, "voice_key_channel").invokeMethod("smartButtonPressed", null)
             }

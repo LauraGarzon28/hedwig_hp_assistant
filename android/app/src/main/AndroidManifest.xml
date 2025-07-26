@@ -34,7 +34,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".HedwigAccessibilityService" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="false">
+        <service android:name=".HedwigAccessibilityService" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" android:exported="false" android:enabled="true" android:stopWithTask="false">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
