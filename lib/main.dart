@@ -15,7 +15,7 @@ void main() {
         "/home": (context) => HomeScreen(),
         "/add_spell": (context) => AddSpellScreen(),
         "/settings": (context) => SettingsScreen(),
-        "/spell_list": (context) => SpellListScreen()
+        "/spell_list": (context) => SpellListScreen(),
       },
     )
   ));
