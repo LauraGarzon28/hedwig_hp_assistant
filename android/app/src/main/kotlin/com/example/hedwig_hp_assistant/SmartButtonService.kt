@@ -1,50 +1,72 @@
 package com.example.hedwig_hp_assistant
 
-import android.app.*
-import android.content.*
-import android.util.Log
+import android.accessibilityservice.AccessibilityService
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Intent
+import android.media.AudioManager
+import android.os.Build
 import android.os.IBinder
-import com.example.hedwig_hp_assistant.R
+import android.view.accessibility.AccessibilityEvent
+import androidx.core.app.NotificationCompat
+import android.content.pm.ServiceInfo
 
 class SmartButtonService : Service() {
 
+    private val channelId = "hedwig_channel_id"
+    private val notificationId = 1
+
     override fun onCreate() {
         super.onCreate()
-        startForegroundService()
+        createNotificationChannel()
+        startForegroundServiceWithMicrophoneType()
+        toggleMicMute() // Tu lógica de mute
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("SmartButtonService", "Servicio ejecutándose...")
-
-        // Lanza MainActivity si no está en primer plano (por ejemplo, si la app estaba cerrada)
-        val launchIntent = Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra("source", "smart_button") // Opcional, si quieres saber desde Flutter que fue invocada por botón
-        }
-        startActivity(launchIntent)
-
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
 
-    private fun startForegroundService() {
-        val channelId = "smart_button_channel"
-        val channel = NotificationChannel(
-            channelId,
-            "Smart Button Service",
-            NotificationManager.IMPORTANCE_LOW
-        )
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                channelId,
+                "Hedwig Background Service",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(serviceChannel)
+        }
+    }
 
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
-
-        val notification = Notification.Builder(this, channelId)
-            .setContentTitle("Asistente activo")
-            .setContentText("Escuchando botón inteligente")
-            .setSmallIcon(R.mipmap.ic_launcher)
+    private fun startForegroundServiceWithMicrophoneType() {
+        val notification: Notification = NotificationCompat.Builder(this, channelId)
+            .setContentTitle("Hedwig funcionando")
+            .setContentText("Control de micrófono activo")
+            .setSmallIcon(android.R.drawable.ic_btn_speak_now)
             .build()
 
-        startForeground(1, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ (API 29) permite pasar tipo
+            startForeground(
+                notificationId,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            )
+        } else {
+            startForeground(notificationId, notification)
+        }
+    }
+
+    private fun toggleMicMute() {
+        val audioManager = getSystemService(AccessibilityService.AUDIO_SERVICE) as AudioManager
+        val isMuted = audioManager.isMicrophoneMute
+        audioManager.isMicrophoneMute = !isMuted
     }
 }

@@ -7,8 +7,9 @@ import 'package:hedwig_hp_assistant/services/smart_button_service.dart';
 import 'package:provider/provider.dart';
 import 'package:hedwig_hp_assistant/screens/spell_list_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SmartButtonService.requestMicPermission();
   SmartButtonService.init();
   runApp(ChangeNotifierProvider(
     create: (context) => SpellProvider(),

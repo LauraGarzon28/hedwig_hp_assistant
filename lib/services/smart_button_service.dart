@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SmartButtonService {
   static const MethodChannel _channel = MethodChannel("voice_key_channel");
@@ -17,5 +18,14 @@ class SmartButtonService {
           break;
       }
     });
+  }
+
+  static Future<void> requestMicPermission() async {
+    final status = await Permission.microphone.request();
+    if (status.isGranted) {
+      // Puedes iniciar el servicio
+    } else {
+      // Mostrar error al usuario
+    }
   }
 }
